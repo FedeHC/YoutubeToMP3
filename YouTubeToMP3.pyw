@@ -21,13 +21,13 @@ except ImportError as e:
 
 class YoutubeToMP3():
   """Clase para GUI de Tkinter."""
-  def __init__(self, dirFinal, template="%(title)s.%(ext)s"):
+  def __init__(self, title, dirFinal, template="%(title)s.%(ext)s"):
 
     # Variable estado de la descarga:
     self.downloadStatus = None
 
     # El nombre del archivo mp3:
-    self.mp3file = ""
+    self.mp3File = ""
 
     # Obteniendo directorio actual de trabajo (para usar como carpeta temporal de trabajo):
     self.dirTemp = os.getcwd() + "/"
@@ -53,13 +53,13 @@ class YoutubeToMP3():
     }
 
     # Iniciando interfaz gráfica:
-    self.gui()
+    self.gui(title)
 
 
-  def gui(self):
+  def gui(self, title):
     """Método que inicia la interfaz gráfica del programa con sus respectivos widgets."""
     self.window = Tk()
-    self.window.title("YouTubeToMP3")
+    self.window.title(title)
     self.window.geometry("700x120")
     self.window.resizable(0, 0)
 
@@ -160,9 +160,14 @@ class YoutubeToMP3():
 
       # Si terminó la descarga y la conversión a mp3, renombrar y mover a la carpeta destino:
       if self.downloadStatus == "descargado":
-        oldname = self.mp3file
-        self.mp3file = self.mp3file .replace(" - ", "- ")
-        os.rename(self.dirTemp + oldname, self.dirFinal + self.mp3file)
+        try:
+          oldName = self.mp3File
+          self.mp3File = self.mp3File .replace(" - ", "- ")
+          os.rename(self.dirTemp + oldName, self.dirFinal + self.mp3File)
+        except OSError as e:
+          print("\n[ERROR al cargar módúlos necesarios para el programa.\nDetalles del error:\n")
+          print(e)
+          self.lbStatus.configure(text="No se pudo renombrar y mover a la carpeta destino (chequear permisos de escritura).", fg="red")
 
     return
 
@@ -188,9 +193,9 @@ class YoutubeToMP3():
 
     if d["status"] == "finished":
       self.downloadStatus = "descargado"
-      self.mp3file = d["filename"]                # Nombre video + extensión original.
-      pos = self.mp3file .find(".")               # Buscando donde empieza la extensión.
-      self.mp3file = self.mp3file[0:pos] + ".mp3" # Borrando vieja extensión y cambiando por ".mp3"
+      self.mp3File = d["filename"]                # Nombre video + extensión original.
+      pos = self.mp3File .find(".")               # Buscando donde empieza la extensión.
+      self.mp3File = self.mp3File[0:pos] + ".mp3" # Borrando vieja extensión y cambiando por ".mp3"
 
       self.btnDownload.config(state='normal')     # Activando nuevamente el botón de iniciar descarga.
       self.lbStatus.configure(text="Descarga y conversión completa! (chequear en carpeta destino)", fg="green")
@@ -213,4 +218,4 @@ class MyLogger(object):
 
 # Iniciando:
 if __name__ == '__main__':
-  youtubeToMp3 = YoutubeToMP3("/media/Archivos/")
+  youtubeToMp3 = YoutubeToMP3("YouTubeToMP3 v1.0", "/media/Archivos/")
