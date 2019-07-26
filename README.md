@@ -1,18 +1,17 @@
-# YoutubeToMP3
-### v1.0
+# YoutubeToMP3 1.0b
 
-Una sencilla app para descargar música a partir de videos de Youtube.
+Una sencilla app de escritorio para descargar música en formato mp3 desde Youtube.
 
-Hecho en Python, usando Tkinter para la interfaz gráfica y Youtube_dl para descargar y convertir los videos a mp3.
+Hecho en *Python 3*, usando *Tkinter* para la interfaz gráfica y *Youtube_dl* para descargar y convertir los videos a mp3.
 
 ![Imagen](https://github.com/FedeHC/YoutubeToMP3/blob/master/images/captura.jpg)
 
 ## Requisitos de momento:
-- Distro Linux (aún no probado en Win10 y Mac).
+- Linux (aún no probado en Win10 y Mac, próximemente a testear).
 - Python 3.x instalado.
-- Instalar el módulo Youtube_dl (ver sección *Más Info*).
+- Instalar el módulo *Youtube_dl* (ver *Más Info*).
 
-En un futuro próximo vendrá con instalador/ejecutable.
+En un futuro próximo vendrá con instalador/ejecutable para cualquier S.O.
 
 ## Uso:
 Simplemente ejecutar el script de python:
@@ -20,7 +19,7 @@ Simplemente ejecutar el script de python:
     python3 YouTubeToMP3.pyw
 ```
 
-Y para descargar basta con copiar y pegar la url del video (y elegir una carpeta de destino).
+Para descargar música basta con copiar y pegar la url del video y elegir una carpeta de destino.
 
 ### Más info:
 - [Youtube_dl Doc](https://github.com/ytdl-org/youtube-dl/blob/master/README.md)

@@ -184,8 +184,8 @@ class YoutubeToMP3():
 
 
   def checkAndChangeToMP3(self, d):
-    """Método que chequea la extensión del video previamente bajado (recibido como dicc.) y lo renombra
-    a MP3."""
+    """Método que chequea la extensión del video previamente bajado (recibido como string en diccionario) y
+    lo renombra a MP3."""
     
     # Chequeando desde diccionario generado por Youtube_dl:
     self.mp3File = d["filename"]
@@ -205,7 +205,7 @@ class YoutubeToMP3():
 
 
   def hookYoutubeDl(self, d):
-    """Método para recibir mensaje de éxito desde youtube_dl."""
+    """Método callback para recibir mensaje de status desde youtube_dl."""
     if d["status"] == "error":
       self.downloadStatus = "error"
       self.lbStatus.configure(text="Error al intentar descargar video desde Youtube.", fg="red")
@@ -239,4 +239,4 @@ class MyLogger(object):
 
 # Iniciando:
 if __name__ == '__main__':
-  youtubeToMp3 = YoutubeToMP3("YouTubeToMP3 v1.0", "/media/Archivos/")
+  youtubeToMp3 = YoutubeToMP3("YouTubeToMP3 v1.0b", "/media/Archivos/")
