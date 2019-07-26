@@ -48,7 +48,7 @@ class YoutubeToMP3():
           "preferredquality": "320",
       }],
       "logger": MyLogger(),
-      "progress_hooks": [self.my_hook],
+      "progress_hooks": [self.hookYoutubeDl],
       "outtmpl": self.template,
     }
 
@@ -164,11 +164,14 @@ class YoutubeToMP3():
           oldName = self.mp3File
           self.mp3File = self.mp3File .replace(" - ", "- ")
           os.rename(self.dirTemp + oldName, self.dirFinal + self.mp3File)
+
         except OSError as e:
           print("\n[ERROR al cargar módúlos necesarios para el programa.\nDetalles del error:\n")
           print(e)
-          self.lbStatus.configure(text="No se pudo renombrar y mover a la carpeta destino (chequear permisos de escritura).", fg="red")
+          self.lbStatus.configure(text="No se pudo mover a la carpeta destino (chequear permisos de escritura).", fg="red")
 
+    # Reseteando variable al terminar (para evitar problemas para las sig. descargas):
+    self.mp3File = ""
     return
 
 
@@ -180,7 +183,28 @@ class YoutubeToMP3():
     return
 
 
-  def my_hook(self, d):
+  def checkAndChangeToMP3(self, d):
+    """Método que chequea la extensión del video previamente bajado (recibido como dicc.) y lo renombra
+    a MP3."""
+    
+    # Chequeando desde diccionario generado por Youtube_dl:
+    self.mp3File = d["filename"]
+    
+    # Si es un formato de video típico, quitarlo y renombrarlo a MP3:
+    if self.mp3File.endswith(".webm") or self.mp3File.endswith(".mpeg") \
+    or self.mp3File.endswith(".mpg") or self.mp3File.endswith(".avi"):
+      self.mp3File = self.mp3File[0:-5] + ".mp3"
+    
+    # Si no es un formato conocido, buscar a partir de donde inicia la extensión y renombrarlo a MP3.
+    # (Este método puede generar problemas si el título termina de casualidad con algún punto):
+    else:
+      pos = self.mp3File.find(".", -5)
+      self.mp3File = self.mp3File[0:pos]
+
+    return
+
+
+  def hookYoutubeDl(self, d):
     """Método para recibir mensaje de éxito desde youtube_dl."""
     if d["status"] == "error":
       self.downloadStatus = "error"
@@ -188,16 +212,13 @@ class YoutubeToMP3():
 
     if d["status"] == "downloading":
       self.downloadStatus = "descargando"
-      self.btnDownload.config(state='disabled')   # Desactivando temp. el botón de iniciar (para evitar problemas).
+      self.btnDownload.config(state='disabled') # Desactivando temp. el botón de iniciar (para evitar problemas).
       self.lbStatus.configure(text="Iniciando descarga, por favor espere...", fg="green")
 
     if d["status"] == "finished":
-      self.downloadStatus = "descargado"
-      self.mp3File = d["filename"]                # Nombre video + extensión original.
-      pos = self.mp3File .find(".")               # Buscando donde empieza la extensión.
-      self.mp3File = self.mp3File[0:pos] + ".mp3" # Borrando vieja extensión y cambiando por ".mp3"
-
-      self.btnDownload.config(state='normal')     # Activando nuevamente el botón de iniciar descarga.
+      self.downloadStatus = "descargado"        # Cambiando status.
+      self.checkAndChangeToMP3(d)               # Renombrando a MP3.
+      self.btnDownload.config(state='normal')   # Activando nuevamente el botón de iniciar descarga.
       self.lbStatus.configure(text="Descarga y conversión completa! (chequear en carpeta destino)", fg="green")
 
     return
