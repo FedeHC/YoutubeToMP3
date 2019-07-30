@@ -13,7 +13,7 @@ if __name__ != "__main__":
     from tkinter import ttk
     from tkinter import filedialog
 
-    # Otros:
+    # Otros módulos:
     import threading
 
 
@@ -52,6 +52,8 @@ if __name__ != "__main__":
       """Clase para ejecutar Youtube_dl hook en un thread aparte."""
 
       def __init__(self, queue, ytdl_opts, url):
+
+        # Invocando constructor padre:
         threading.Thread.__init__(self)
         
         # Variables principales:
@@ -61,14 +63,10 @@ if __name__ != "__main__":
         # Diccionario de opciones para youtube_dl:
         self.ytdl_opts = ytdl_opts
         self.ytdl_opts["progress_hooks"] = [self.hook_ytdl]
-        print(self.ytdl_opts)
+        # print(self.ytdl_opts)
         
-        # Estableciendo thread como "daemon" para que al cerrar la GUI finalice también su ejecución
-        # (en caso de que siga abierto).
-        self.daemon = True
-
-        # Iniciando thread:
-        self.start()
+        self.daemon = True # Estableciendo thread como "daemon" para que al cerrar la GUI finalice también su ejecución
+        self.start()       # Iniciando thread.
 
 
       def run(self):
@@ -84,6 +82,7 @@ if __name__ != "__main__":
         """Método callback que recibe el estado de ejecución de youtube_dl y lo guarda como string en una Queue.
         Se recibe un diccionario como parámetro."""
         
+        # Si se recibe diccionario, ponerlo tal cual en queue:
         if d:
           self.queue.put(d)
 

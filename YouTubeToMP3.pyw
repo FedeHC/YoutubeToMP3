@@ -99,6 +99,7 @@ class YoutubeToMP3():
     # Determinando variables con los colores a usar:
     self.black = "#282923"
     self.white = "#F3F8F2"
+    self.grey = "#51524B"
     self.red = "#EF5958"
     self.green = "#71FF4F"
 
@@ -113,11 +114,15 @@ class YoutubeToMP3():
     # Ajustando colores de letra, fondo y selección al resto de los widgets:
     self.label_url.configure(fg=self.white, bg=self.black)
     self.entry_url.configure(fg=self.white, bg=self.black,
+                             disabledbackground=self.grey,
                              highlightthickness=1, highlightcolor=self.red, selectbackground=self.red)
-    self.btn_download.configure(fg=self.white, bg=self.black)
+    self.btn_download.configure(fg=self.white, bg=self.black,
+                                disabledforeground=self.grey)
     self.label_dir.configure(fg=self.white, bg=self.black)
-    self.entry_dir.configure(fg=self.white, bg=self.black, selectbackground=self.red)
-    self.btn_final_dir.configure(fg=self.white, bg=self.black)
+    self.entry_dir.configure(fg=self.white, bg=self.black,
+                             disabledbackground=self.grey, selectbackground=self.red)
+    self.btn_final_dir.configure(fg=self.white, bg=self.black,
+                                 disabledforeground=self.grey)
     self.label_status_title.configure(fg=self.white, bg=self.black)
     self.label_status.configure(fg=self.white, bg=self.black)
 

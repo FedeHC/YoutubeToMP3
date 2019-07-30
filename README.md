@@ -6,12 +6,13 @@ Hecho en *Python 3*, usando *Tkinter* para la interfaz gráfica y *Youtube_dl* p
 
 ![Imagen](https://github.com/FedeHC/YoutubeToMP3/blob/master/images/captura.jpg)
 
-## Requisitos de momento:
-- Linux (aún no probado en Win10 y Mac, próximemente a testear).
-- Python 3.x instalado.
-- Instalar el módulo *Youtube_dl* (ver *Más Info*).
+## Aclaraciones:
+- De momento no es es un ejecutable y solo fue probado en Linux Mint 18. Faltaría probar en otras distros y en Windows y Mac. Estimo que en un principio debería poder correr sin problemas en cualquier S.O. si se cumplen con los requisitos.
 
-En un futuro próximo vendrá con instalador/ejecutable para cualquier S.O.
+## Requisitos:
+- [Python >=3.5]((https://www.python.org/downloads/)).
+- Tener instalado el módulo [Youtube_dl](http://ytdl-org.github.io/youtube-dl/download.html) (en Windows es necesario tener *Microsoft Visual C++ 2010 Redistributable Package (x86)*, ver link).
+
 
 ## Uso:
 Simplemente ejecutar el script de python:
