@@ -5,7 +5,7 @@ from extras import *
 
 
 class YoutubeToMP3():
-  """Clase que contiene toda la interfaz gráfica y el grueso de la funcionalidad del programa principal."""
+  """Clase que contiene toda la interfaz gráfica y el grueso de su funcionalidad."""
 
   def __init__(self, title, path, ytdl_opts, template):
 
@@ -23,7 +23,7 @@ class YoutubeToMP3():
   def gui(self, title):
     """Método que inicia la GUI del programa, con sus respectivos widgets."""
     
-    # [Propiedades de la Ventana]
+    # [Propiedades generales de la ventana]
     self.window = Tk()
     self.window.title(title)
     self.window.geometry("700x110")
@@ -36,28 +36,27 @@ class YoutubeToMP3():
 
     # [MENU]
     # [Barra de menu]
-    menubar = Menu(self.window)
-    self.window["menu"] = menubar
+    self.menubar = Menu(self.window)
+    self.window["menu"] = self.menubar
 
     # [Menu Archivo]
-    menu_file = Menu(menubar)
-    menubar.add_cascade(menu=menu_file, label="Archivo")
-    menu_file.add_command(label="Iniciar")
-    menu_file.add_separator()
-    menu_file.add_command(label="Salir")
+    self.menu_file = Menu(self.menubar)
+    self.menubar.add_cascade(menu=self.menu_file, label="Archivo")
+    self.menu_file.add_command(label="Iniciar")
+    self.menu_file.add_separator()
+    self.menu_file.add_command(label="Salir")
 
     # [Menu Acerca]
-    menu_help = Menu(menubar)
-    menubar.add_cascade(menu=menu_help, label="Ayuda")
-    menu_help.add_command(label="Acerca")
+    self.menu_help = Menu(self.menubar)
+    self.menubar.add_cascade(menu=self.menu_help, label="Ayuda")
+    self.menu_help.add_command(label="Acerca")
 
     # [VENTANA]
     # [URL / Botón INICIAR]
-    label_url = Label(self.window, text="Youtube URL:", font=("Arial", 14))
-    label_url.grid(column=0, row=0, padx=10, pady=10, sticky=W,)
+    self.label_url = Label(self.window, text="Youtube URL:", font=("Arial", 14))
+    self.label_url.grid(column=0, row=0, padx=10, pady=10, sticky=W,)
 
-    self.entry_url = Entry(self.window, width=41, font=("Arial", 14), fg="red", bd=0,
-                       highlightcolor="#EF5958", highlightthickness=1, selectbackground="#EF5958")
+    self.entry_url = Entry(self.window, width=41, font=("Arial", 14), bd=0)
     self.entry_url.grid(column=1, row=0, sticky=W)
     self.entry_url.focus()    # Poner en foco en este campo al arrancar el programa.
 
@@ -65,19 +64,19 @@ class YoutubeToMP3():
     self.btn_download.grid(column=2, row=0, padx=10, sticky=W)
 
     # [Carpeta de Descarga]
-    label_dir = Label(self.window, text="Carpeta de descarga:", font=("Arial", 10))
-    label_dir.grid(column=0, row=1, padx=10, sticky=W)
+    self.label_dir = Label(self.window, text="Carpeta de descarga:", font=("Arial", 10))
+    self.label_dir.grid(column=0, row=1, padx=10, sticky=W)
 
-    self.entry_dir = Entry(self.window, width=64, font=("Arial", 10), bd=0, selectbackground="#EF5958")
+    self.entry_dir = Entry(self.window, width=64, font=("Arial", 10), bd=0)
     self.entry_dir.insert(0, self.final_path)
     self.entry_dir.grid(column=1, row=1, sticky=W)
 
-    self.btn_final_dir = Button(self.window, text="CAMBIAR", font=("Arial", 6), command=self.select_dir)
+    self.btn_final_dir = Button(self.window, text="Seleccionar", font=("Arial", 6), command=self.select_dir)
     self.btn_final_dir.grid(column=2, row=1, padx=10, sticky=W)
 
     # [Mensaje de status]
-    label_status_title = Label(self.window, text="Status:", font=("Arial", 10))
-    label_status_title.grid(column=0, row=2, padx=10, pady=20, sticky=W)
+    self.label_status_title = Label(self.window, text="Status:", font=("Arial", 10))
+    self.label_status_title.grid(column=0, row=2, padx=10, pady=20, sticky=W)
 
     self.status_message = StringVar()
     self.status_message.set("Esperando una URL válida...")
@@ -85,8 +84,42 @@ class YoutubeToMP3():
     self.label_status = Label(self.window, textvariable=self.status_message, font=("Arial", 10, "italic"))
     self.label_status.grid(column=1, row=2, pady=10, sticky=W)
 
+    # Cambiando todos los colores de ventana y widgets:
+    self.change_GUI_colors()
+
     # Iniciando loop:
     self.window.mainloop()
+
+    return
+
+
+  def change_GUI_colors(self):
+    """Metodo que simplemente cambia los colores de la GUI a los valores pasados."""
+
+    # Determinando variables con los colores a usar:
+    self.black = "#282923"
+    self.white = "#F3F8F2"
+    self.red = "#EF5958"
+    self.green = "#71FF4F"
+
+    # Ajustando colores de letra y fondo a la ventana:
+    self.window.configure(bg=self.black)
+
+    # Ajustando colores de letra y fondo a menues:
+    self.menubar.configure(fg=self.white, bg=self.black)
+    self.menu_file.configure(fg=self.white, bg=self.black)
+    self.menu_help.configure(fg=self.white, bg=self.black)
+
+    # Ajustando colores de letra, fondo y selección al resto de los widgets:
+    self.label_url.configure(fg=self.white, bg=self.black)
+    self.entry_url.configure(fg=self.white, bg=self.black,
+                             highlightthickness=1, highlightcolor=self.red, selectbackground=self.red)
+    self.btn_download.configure(fg=self.white, bg=self.black)
+    self.label_dir.configure(fg=self.white, bg=self.black)
+    self.entry_dir.configure(fg=self.white, bg=self.black, selectbackground=self.red)
+    self.btn_final_dir.configure(fg=self.white, bg=self.black)
+    self.label_status_title.configure(fg=self.white, bg=self.black)
+    self.label_status.configure(fg=self.white, bg=self.black)
 
     return
 
@@ -170,12 +203,12 @@ class YoutubeToMP3():
     if status_url["valid"] == False:
       if status_url["reason"] == "empty":
         self.status_message.set("URL vacia, ingrese una.")
-        self.label_status.configure(textvariable=self.status_message, fg="red")
+        self.label_status.configure(textvariable=self.status_message, fg=self.red)
         self.window.update_idletasks()    # Actualizar GUI.
 
       elif status_url["reason"] == "invalid":
         self.status_message.set("URL no válida, ingrese una nueva.")
-        self.label_status.configure(textvariable=self.status_message, fg="red")
+        self.label_status.configure(textvariable=self.status_message, fg=self.red)
         self.window.update_idletasks()    # Actualizar GUI.
 
       else:
@@ -208,7 +241,7 @@ class YoutubeToMP3():
     if ok_url:
       url = status_url['url'] # Se cambia por la URL ya rectificada.
       self.status_message.set("URL válida! Comenzando...")
-      self.label_status.configure(textvariable=self.status_message, fg="black")
+      self.label_status.configure(textvariable=self.status_message, fg=self.white)
       self.window.update_idletasks()      # Actualizar GUI.
 
       self.youtube_dl_thread(url) # Youtube_dl en thread paralelo para desc. y convertir a MP3 sin congelar GUI.
@@ -218,7 +251,7 @@ class YoutubeToMP3():
 
       # Mensaje final de éxito:
       self.status_message.set("¡Conversión a MP3 finalizada con éxito! :)")
-      self.label_status.configure(textvariable=self.status_message, fg="green")
+      self.label_status.configure(textvariable=self.status_message, fg=self.green)
       self.window.update_idletasks()      # Actualizar GUI.
 
     # En cualquier caso...
@@ -269,14 +302,14 @@ class YoutubeToMP3():
           # Si se está descargando:
           if self.download_status == "downloading":
             self.status_message.set("Iniciando descarga del video...")
-            self.label_status.configure(textvariable=self.status_message, fg="black")
+            self.label_status.configure(textvariable=self.status_message, fg=self.white)
             self.change_buttons_state("disabled")         # Para evitar problemas durante la descarga.
             self.window.update_idletasks()                # Actualizar GUI.
 
           # Si se terminó de descargar:
           if self.download_status == "finished":
             self.status_message.set("Video descargado, convirtiendo ahora a MP3 (espere unos segundos...)")
-            self.label_status.configure(textvariable=self.status_message, fg="black")
+            self.label_status.configure(textvariable=self.status_message, fg=self.white)
             self.window.update_idletasks()                # Actualizar GUI.
             finish = True                                 # Para terminar con el ciclo y finalizar.
 
@@ -284,7 +317,7 @@ class YoutubeToMP3():
           if self.download_status == "error":
             self.change_buttons_state("normal")           # Activando botones nuevamente.
             self.status_message.set("Error al descargar video.")
-            self.label_status.configure(textvariable=self.status_message, fg="red")
+            self.label_status.configure(textvariable=self.status_message, fg=self.red)
             self.window.update_idletasks()                # Actualizar GUI.
             finish = True                                 # Para terminar con el ciclo y finalizar.
 
@@ -370,7 +403,7 @@ class YoutubeToMP3():
     except OSError as e:
       print("\n# ERROR al renombrar archivo en carpeta destino.\n- Detalles: {0}".format(e))
       self.status_message.set("MP3 descargado, pero no se pudo renombrar correctamente (ver consola).")
-      self.label_status.configure(textvariable=self.status_message, fg="black")
+      self.label_status.configure(textvariable=self.status_message, fg=self.white)
       self.window.update_idletasks()                # Actualizar GUI.
 
     except ImportError as e:

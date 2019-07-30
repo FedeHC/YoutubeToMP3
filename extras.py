@@ -61,7 +61,8 @@ if __name__ != "__main__":
         # Diccionario de opciones para youtube_dl:
         self.ytdl_opts = ytdl_opts
         self.ytdl_opts["progress_hooks"] = [self.hook_ytdl]
-
+        print(self.ytdl_opts)
+        
         # Estableciendo thread como "daemon" para que al cerrar la GUI finalice también su ejecución
         # (en caso de que siga abierto).
         self.daemon = True
