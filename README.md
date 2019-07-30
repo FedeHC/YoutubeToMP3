@@ -7,7 +7,7 @@ Hecho en *Python 3*, usando *Tkinter* para la interfaz gráfica y *Youtube_dl* p
 ![Imagen](https://github.com/FedeHC/YoutubeToMP3/blob/master/images/captura.jpg)
 
 ## Aclaraciones:
-- De momento no es más que un script ejecutable, solo fue probado en Linux Mint 18. Faltaría probar en otras distros, y en Windows y Mac, aunque en principio debería poder correr sin problemas en estos si se cumplen con los requisitos.
+- De momento no es más que un script ejecutable, solo probado en Linux Mint 18. Faltaría testear en otras distros, en Windows y Mac, aunque en principio debería poder correr sin problemas en estos si se cumplen con los requisitos.
 
 ## Requisitos:
 - [Python >=3.5](https://www.python.org/downloads/).

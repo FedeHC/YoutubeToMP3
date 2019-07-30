@@ -54,7 +54,7 @@ class YoutubeToMP3():
     # [VENTANA]
     # [URL / Botón INICIAR]
     self.label_url = Label(self.window, text="Youtube URL:", font=("Arial", 14))
-    self.label_url.grid(column=0, row=0, padx=10, pady=10, sticky=W,)
+    self.label_url.grid(column=0, row=0, padx=10, pady=10, sticky=E)
 
     self.entry_url = Entry(self.window, width=41, font=("Arial", 14), bd=0)
     self.entry_url.grid(column=1, row=0, sticky=W)
@@ -65,7 +65,7 @@ class YoutubeToMP3():
 
     # [Carpeta de Descarga]
     self.label_dir = Label(self.window, text="Carpeta de descarga:", font=("Arial", 10))
-    self.label_dir.grid(column=0, row=1, padx=10, sticky=W)
+    self.label_dir.grid(column=0, row=1, padx=10, sticky=E)
 
     self.entry_dir = Entry(self.window, width=64, font=("Arial", 10), bd=0)
     self.entry_dir.insert(0, self.final_path)
@@ -76,7 +76,7 @@ class YoutubeToMP3():
 
     # [Mensaje de status]
     self.label_status_title = Label(self.window, text="Status:", font=("Arial", 10))
-    self.label_status_title.grid(column=0, row=2, padx=10, pady=20, sticky=W)
+    self.label_status_title.grid(column=0, row=2, padx=10, pady=20, sticky=E)
 
     self.status_message = StringVar()
     self.status_message.set("Esperando una URL válida...")
@@ -100,7 +100,7 @@ class YoutubeToMP3():
     self.black = "#282923"
     self.white = "#F3F8F2"
     self.grey = "#51524B"
-    self.red = "#EF5958"
+    self.red = "#CE201F"
     self.green = "#71FF4F"
 
     # Ajustando colores de letra y fondo a la ventana:
@@ -115,12 +115,15 @@ class YoutubeToMP3():
     self.label_url.configure(fg=self.white, bg=self.black)
     self.entry_url.configure(fg=self.white, bg=self.black,
                              disabledbackground=self.grey,
-                             highlightthickness=1, highlightcolor=self.red, selectbackground=self.red)
+                             highlightthickness=1, highlightcolor=self.red,
+                             selectbackground=self.red, selectforeground=self.white)
     self.btn_download.configure(fg=self.white, bg=self.black,
                                 disabledforeground=self.grey)
     self.label_dir.configure(fg=self.white, bg=self.black)
     self.entry_dir.configure(fg=self.white, bg=self.black,
-                             disabledbackground=self.grey, selectbackground=self.red)
+                             highlightthickness=1, highlightcolor=self.red,
+                             disabledbackground=self.grey,
+                             selectbackground=self.red, selectforeground=self.white)
     self.btn_final_dir.configure(fg=self.white, bg=self.black,
                                  disabledforeground=self.grey)
     self.label_status_title.configure(fg=self.white, bg=self.black)
