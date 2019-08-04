@@ -7,11 +7,14 @@ Hecho en *Python 3*, usando *Tkinter* para la interfaz gráfica y *Youtube_dl* p
 ![Imagen](https://github.com/FedeHC/YoutubeToMP3/blob/master/images/captura.jpg)
 
 ## Aclaraciones:
-- De momento no es más que un script ejecutable, solo probado en Linux Mint 18. Faltaría testear en otras distros, en Windows y Mac, aunque en principio debería poder correr sin problemas en estos si se cumplen con los requisitos.
+- De momento no es más que un script ejecutable, solo probado en Linux Mint 18. Faltaría testear en otras distros y en Windows y Mac, aunque en principio debería correr sin problemas en estos si se cumplen con los requisitos.
 
 ## Requisitos:
-- [Python >=3.5](https://www.python.org/downloads/).
-- Tener instalado el módulo [Youtube_dl](http://ytdl-org.github.io/youtube-dl/download.html) (en Windows es necesario tener *Microsoft Visual C++ 2010 Redistributable Package (x86)*, ver link).
+- [Python 3.5 (o superior)](https://www.python.org/downloads/).
+    - **Tkinter** suele venir por defecto con Python, pero no está de más en chequear que [esté instalado](https://tkdocs.com/tutorial/install.html) en nuestro sistema.
+- Tener instalado el módulo [Youtube_dl](http://ytdl-org.github.io/youtube-dl/download.html)
+    - En Windows es necesario tener [Microsoft Visual C++ 2010 Redistributable Package (x86)](https://www.microsoft.com/en-US/download/details.aspx?id=5555) (más detalles en [Youtube_dl](http://ytdl-org.github.io/youtube-dl/download.html)).
+- Youtube_dl a su vez necesita de [ffmpeg](https://ffmpeg.org/download.html) para realizar la conversión de video a MP3.
 
 
 ## Uso:
@@ -23,4 +26,6 @@ Simplemente ejecutar el script de python:
 Para descargar música basta con copiar y pegar la url del video y elegir una carpeta de destino.
 
 ### Más info:
+- [Python Doc](https://www.python.org/doc/)
 - [Youtube_dl Doc](https://github.com/ytdl-org/youtube-dl/blob/master/README.md)
+- [FFmpeg Documentation](https://ffmpeg.org/documentation.html/)

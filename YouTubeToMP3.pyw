@@ -11,13 +11,13 @@ class YoutubeToMP3():
 
     self.reset_variables()                  # Reseteando las variables principales.
     self.final_path = self.check_path(path) # Seteando el directorio de trabajo.
-    self.ytdl_opts = ytdl_opts # Dicc. de config básica para youtube_dl.
+    self.ytdl_opts = ytdl_opts              # Dicc. de config básica para youtube_dl.
     
     # Seteando path, nombre y extensión final del mp3 convertido en dicc. de youtube_dl:
     self.template = template
     self.ytdl_opts["outtmpl"] = self.final_path + self.template
 
-    self.gui(title) # Iniciando método que inicia la GUI del programa.
+    self.gui(title)                         # Iniciando la GUI del programa.
     
 
   def gui(self, title):
