@@ -23,7 +23,10 @@ Simplemente ejecutar el script de python:
     python3 YouTubeToMP3.pyw
 ```
 
-Para descargar música, basta con copiar y pegar la url del video y elegir una carpeta de destino.
+Para descargar música, basta con copiar y pegar la url del video y elegir una carpeta de destino:
+
+![Imagen](https://github.com/FedeHC/YoutubeToMP3/blob/master/images/captura-2.jpg)
+
 
 ### Más info:
 - [Python Doc](https://www.python.org/doc/)
