@@ -4,7 +4,7 @@ Una simple app de escritorio que hace de frontend del programa *youtube_dl* y qu
 
 Creado con *Python 3*, usando *Tkinter* para la interfaz gráfica y *Youtube_dl* para descargar y convertir los videos a MP3 (usando *FFmpeg* internamente para la conversión de video a audio).
 
-![Imagen](https://github.com/FedeHC/YoutubeToMP3/blob/master/images/captura.jpg)
+![Imagen](https://github.com/FedeHC/YoutubeToMP3/blob/master/images/captura-1.jpg)
 
 ## Aclaraciones:
 - De momento no es más que un script ejecutable, solo probado en Linux Mint 18/19. Faltaría testear en otras distros ¡y en Windows y Mac! Aunque en principio debería correr sin problemas en cualquiera de estos (o con pequeñas correcciones) si se cumplen con los requisitos.
