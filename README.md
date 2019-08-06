@@ -1,8 +1,8 @@
 # YoutubeToMP3 1.0b
 
-Una simple app de escritorio, que hace de frontend del programa youtube_dl y que permite descargar música en formato mp3 desde Youtube mismo.
+Una simple app de escritorio que hace de frontend del programa *youtube_dl* y que permite descargar música en formato MP3 desde Youtube mismo.
 
-Hecho en *Python 3*, usando *Tkinter* para la interfaz gráfica y *Youtube_dl* para descargar y convertir los videos a mp3 (usando *FFmpeg* para este último cometido).
+Creado con *Python 3*, usando *Tkinter* para la interfaz gráfica y *Youtube_dl* para descargar y convertir los videos a MP3 (usando *FFmpeg* internamente para la conversión de video a audio).
 
 ![Imagen](https://github.com/FedeHC/YoutubeToMP3/blob/master/images/captura.jpg)
 
@@ -11,11 +11,11 @@ Hecho en *Python 3*, usando *Tkinter* para la interfaz gráfica y *Youtube_dl* p
 
 ## Requisitos:
 - [Python 3.5 (o superior)](https://www.python.org/downloads/).
-    - **Tkinter** suele venir por defecto con Python, pero no está de más en chequear que [esté instalado](https://tkdocs.com/tutorial/install.html) en nuestro sistema.
+    - El módulo **Tkinter** suele venir instalado por defecto con *Python*, pero no está de más en chequear que [esté instalado](https://tkdocs.com/tutorial/install.html) en nuestro propio sistema.
 - Tener instalado [Youtube_dl](http://ytdl-org.github.io/youtube-dl/download.html).
     - En Windows es necesario tener [Microsoft Visual C++ 2010 Redistributable Package (x86)](https://www.microsoft.com/en-US/download/details.aspx?id=5555) (más detalles en [Youtube_dl](http://ytdl-org.github.io/youtube-dl/download.html)).
 - Youtube_dl a su vez necesita [FFmpeg](https://ffmpeg.org/download.html) para realizar la conversión de video a MP3.
-- En Linux es recomendable usar [Virtualenv](https://virtualenv.pypa.io/en/stable/) para instalar de modo separado *Python* y *youtube_dl* del SO (y los módulos secundarios que estos 2 instalen), dado que muchas distros suelen tener instalado su propia versión de Python para su funcionamiento interno.
+- En Linux es recomendable usar [Virtualenv](https://virtualenv.pypa.io/en/stable/installation/) para instalar por separado *Python* y *youtube_dl* del propio sistema operativo (amén de los módulos secundarios que estos 2 instalen), dado que muchas distros -como Ubuntu y Linux Mint- suelen tener instalado su propia versión de Python para su funcionamiento interno.
 
 ## Uso:
 Simplemente ejecutar el script de python:
@@ -29,3 +29,4 @@ Para descargar música, basta con copiar y pegar la url del video y elegir una c
 - [Python Doc](https://www.python.org/doc/)
 - [Youtube_dl Doc](https://github.com/ytdl-org/youtube-dl/blob/master/README.md)
 - [FFmpeg Documentation](https://ffmpeg.org/documentation.html/)
+- [Virtualenv](https://virtualenv.pypa.io/en/stable/)
