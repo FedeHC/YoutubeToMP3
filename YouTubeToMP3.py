@@ -238,7 +238,7 @@ class YoutubeToMP3():
     if ok_url:
       url = status_url['url']                 # Se actualiza a la URL ya rectificada.
       self.change_buttons_state("disabled")   # Habilitando botones y campos nuevamente.
-      self.change_status_message(message="URL válida! Comenzando descarga, espere un momento...", color=self.white)
+      self.change_status_message(message="URL válida! Iniciando...", color=self.white)
       
       # Iniciando Youtube_dl en un thread paralelo de ejecución:
       self.youtube_dl_thread(url)             
@@ -292,48 +292,67 @@ class YoutubeToMP3():
     """Método que chequea en queue en búsqueda de dicc. de youtube_dl. Si no se recibe dicc., se vuelve
     a reiniciar el ciclo hasta obtener una. El ciclo finaliza al encontrar un mensaje de status determinado."""
 
-    finish = False
-    status_updated = False
+    finish = False                          # Flag de control.
+    dicc_ok = False                         # Flag para prueba interna.
 
     # Mientras el video no descargue o termine en error, se inicia y se mantiene un ciclo de control:
     while not finish:
       try:
-        d = self.queue.get(0)           # Obteniendo dicc. desde queue.
-        self.video_file = d["filename"] # Obteniendo path y filename desde dicc.
+        # assert self.queue.get(0), "ERROR: No se obtuvo diccionario desde queue."
+        d = self.queue.get(0)
+        self.download_status = d["status"]  # Actualizando status.
+        self.video_file = d["filename"]     # Obteniendo path y filename desde dicc.
         
-        # Si el status actual difiere del último, actualizar el último:
-        if self.download_status != d["status"]:
-          status_updated = True
-          self.download_status = d["status"]
+        # Ver contenido del diccionario por consola (¡solo usar durante pruebas!)
+        if dicc_ok:
+          print(d)
+          dicc_ok = False
 
-        # Si hubo un cambio de status, chequear el status de la descarga:
-        if status_updated:
+        # Si se está descargando:
+        if self.download_status == "downloading":
+          # print("[Descargando]", end=" ")
 
-          # Si se está descargando:
-          if self.download_status == "downloading":
-            self.change_status_message(message="Iniciando descarga del video...", color=self.white)
-            time.sleep(1)   # Dejar pasar 1 segundo para dar tiempo a que se vea el mensaje.
-            
-          # Si se terminó de descargar:
-          if self.download_status == "finished":
-            self.change_status_message(message="Video descargado, convirtiendo ahora a MP3...",
-                                       color=self.white)
-            time.sleep(1)   # Dejar pasar 1 segundo para dar tiempo a que se vea el mensaje.
-            finish = True   # Para terminar con el ciclo y finalizar.
+          # Obteniendo info necesaria del diccionario: 
+          current_size = str(round(d["downloaded_bytes"] / (1024 * 1024), 2)) + " MB"
+          total_size = str(round(d["total_bytes"] / (1024 * 1024), 2)) + " MB"
+          size = current_size + " / " + total_size
+          
+          percent = d["_percent_str"].strip()
+          speed = d["_speed_str"]
 
-          # Si hubo error al descargar:
-          if self.download_status == "error":
-            self.change_buttons_state("normal") # Activando botones nuevamente.
-            self.change_status_message(message="Error durante descarga del video (compruebe conexión a internet y intente nuevamente).",
-                                       color=self.red)
-            finish = True   # Para terminar con el ciclo y finalizar.
+          current_time = str(round(d["elapsed"], 2)) + " seg."
+          eta_time = str(d["eta"]) + " seg."
+          the_time = current_time + " (est.: " + eta_time + ")."
 
-          status_updated = False
+          # Mostrar info durante descarga en status:
+          # print(f"Descargando: {size} ({percent}) | {speed} | {the_time}")
+          self.change_status_message(message=f"Descargando: {size} ({percent}) | {speed} | {the_time}",
+                                     color=self.white)
 
-      # Si la cola de mensajes está vacía, seguir de largo sin elevar una excepción:
-      except Exception:
-        pass
+          # time.sleep(0.1)     # Dejar un mínimo intervalo para que se vea el mensaje.
 
+        # Si se terminó de descargar:
+        elif self.download_status == "finished":
+          # self.change_status_message(message="Video descargado.", color=self.white)
+          time.sleep(1)         # Dejar un mínimo intervalo para que se vea el nuevo mensaje.
+          finish = True         # Para terminar con el ciclo y finalizar.
+
+        # Si hubo error al descargar:
+        elif self.download_status == "error":
+          self.change_buttons_state("normal") # Activando botones nuevamente.
+          self.change_status_message(message="Error durante descarga del video (compruebe conexión a internet y intente nuevamente).",
+                                      color=self.red)
+          finish = True         # Para terminar con el ciclo y finalizar.
+
+      except queue.Empty:       # En caso de recibir una queue vacía.
+          pass                  # No hacer nada, seguir de largo.
+  
+      """
+      except AssertionError as e:
+        print("\n{0}\n".format(e))
+        sys.exit()              # Forzando finalización del programa.
+      """
+      
     return
 
  
@@ -342,29 +361,43 @@ class YoutubeToMP3():
     En caso de que detecte el video pero el MP3 siga aún incrementando su tamaño, se espera.
     Si deja de incrementar su tamaño, se da por finalizado y se retorna."""
 
-    last_size = -1    # No se deja en 0 porque el ciclo terminaría al empezar...
+    # Variables necesarias:
+    last_size = -1            # No se deja en 0 porque el ciclo terminaría solo al empezar.
     current_size = 0
+    attempts = 0 
     finish = False
       
+    start_time = time.time()        # Tomando el tiempo inicial.
+    current_time = None
+    
     # Mientras el video no se termine de convertir a MP3, se inicia y se mantiene un ciclo de control:
     while not finish:
       try:
-        current_size = os.path.getsize(self.mp3_file) # Obteniendo el último tamaño mientras se realiza la conversión a MP3.
-        show_size = str(round(current_size / (1024 * 1024), 2))
-        self.change_status_message(message=f"Convirtiendo a MP3: {show_size} MB.", color=self.white)
-
-        # Si el último tamaño coincide con el de la última vez, terminar ciclo:
-        if current_size == last_size:
-          finish = True
-
-        # Caso contrario, actualizar último tamaño:
-        else:
-          last_size = current_size
+        current_size = os.path.getsize(self.mp3_file) # Obteniendo el último tamaño (mientras se convierte).
+        the_size = str(round(current_size / (1024 * 1024), 2)) + " MB"
         
-        time.sleep(1)   # Dejar pasar 1 segundo antes de reiniciar el ciclo.
+        current_time = time.time()
+        the_time = str(round(current_time - start_time, 2)) + " seg."
+
+        # print(f"Convirtiendo a MP3: {the_size} ({the_time}) | Intentos: {attempts}")
+        self.change_status_message(message=f"Convirtiendo a MP3: {the_size} ({the_time})",
+                                   color=self.white)
+
+        # Si el último tamaño coincide con el de la última vez:
+        if current_size == last_size:
+          attempts += 1             # Sumar 1 al contador de intentos.
+          if attempts >= 10:        # Si los intentos fueron más de 10 (10 intentos = 1 segundo)
+            finish = True           # Terminar entonces el ciclo.
+        
+        # En caso contrario:
+        else:
+          attempts = 0              # Se resetea el contador de intentos para evitar problemas.
+          last_size = current_size  # ctualizar último tamaño obtenido.
+      
+        time.sleep(0.1)             # Dejar 1/10 seg. hasta empezar de nuevo el ciclo.
 
       except (FileNotFoundError, OSError) as e:
-        pass            # Suele saltar excepción mientras no exista/no encuentre archivo.
+        pass                        # Suele surgir mientras no exista/no encuentre archivo en 1° intento.
 
     return finish
 
