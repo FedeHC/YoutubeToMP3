@@ -41,8 +41,9 @@ class YoutubeToMP3():
 
     # [Menu Archivo]
     self.menu_file = Menu(self.menubar)
-    self.menubar.add_cascade(menu=self.menu_file, label="Archivo")
+    self.menubar.add_cascade(menu=self.menu_file, label="Opciones")
     self.menu_file.add_command(label="Iniciar")
+    self.menu_file.add_command(label="Preferencias")
     self.menu_file.add_separator()
     self.menu_file.add_command(label="Salir")
 
@@ -56,7 +57,7 @@ class YoutubeToMP3():
     self.label_url = Label(self.window, text="Youtube URL:", font=("Arial", 14))
     self.label_url.grid(column=0, row=0, padx=10, pady=10, sticky=E)
 
-    self.entry_url = Entry(self.window, width=41, font=("Arial", 14), bd=0)
+    self.entry_url = Entry(self.window, width=45, font=("Arial", 14), bd=0)
     self.entry_url.grid(column=1, row=0, sticky=W)
     self.entry_url.focus()    # Poner en foco en este campo al arrancar el programa.
 
@@ -136,28 +137,20 @@ class YoutubeToMP3():
     """Método que chequea una path recibida como argumento, remueve espacios y comprueba si es válida para el 
     S.O. actual. Según el caso se rectifica la path recibida según el caso."""
     
-    try:
-      from pathlib import Path
-      import os
+    temp_path = temp_path.strip()       # Removiendo espacios iniciales y finales (si los hay).
 
-      temp_path = temp_path.strip()       # Removiendo espacios iniciales y finales (si los hay).
+    # Chequeando si es una path existente y válida:
+    path = Path(temp_path)
+    if path.exists() and path.is_dir():
+      temp_path = str(path)
 
-      # Chequeando si es una path existente y válida:
-      path = Path(temp_path)
-      if path.exists() and path.is_dir():
-        temp_path = str(path)
-
-      # Si no existe path se avisa por consola:
-      else:
-        print("# AVISO: la path pasada por constructor no es válida (fijando path actual como carpeta de destino)")
-        temp_path = os.getcwd()
-
-    except ImportError as e:
-      print("\n# ERROR: Hubo problemas al cargar módulo.\n- MENSAJE: {0}".format(e))
+    # Si no existe path se avisa por consola:
+    else:
+      print("# AVISO: la path pasada por constructor no es válida (fijando path actual como carpeta de destino)")
+      temp_path = os.getcwd()
 
     # En cualquier caso, se retorna la path rectificada con "/" al final:
-    finally:
-      return temp_path + "/"
+    return temp_path + "/"
 
 
   def select_dir(self):
@@ -210,15 +203,11 @@ class YoutubeToMP3():
     # Si no es una url válida se aborta y se muestra mensaje:
     if status_url["valid"] == False:
       if status_url["reason"] == "empty":
-        self.status_message.set("URL vacia, ingrese una.")
-        self.label_status.configure(textvariable=self.status_message, fg=self.red)
-        self.window.update_idletasks()    # Actualizar GUI.
+        self.change_status_message(message="URL vacia, ingrese una.", color=self.red)
 
       elif status_url["reason"] == "invalid":
-        self.status_message.set("URL no válida, ingrese una nueva.")
-        self.label_status.configure(textvariable=self.status_message, fg=self.red)
-        self.window.update_idletasks()    # Actualizar GUI.
-
+        self.change_status_message(message="URL no válida, ingrese una nueva.", color=self.red)
+      
       else:
         print("# ERROR: se recibió una reason nula desde función check_url dentro de check_status_url.")
 
@@ -247,24 +236,43 @@ class YoutubeToMP3():
 
     # Si la URL es correcta, se prosigue a descargar, convertir a MP3, renombrar, abrir carpeta y avisar:
     if ok_url:
-      url = status_url['url'] # Se cambia por la URL ya rectificada.
-      self.status_message.set("URL válida! Comenzando...")
-      self.label_status.configure(textvariable=self.status_message, fg=self.white)
-      self.window.update_idletasks()      # Actualizar GUI.
+      url = status_url['url']                 # Se actualiza a la URL ya rectificada.
+      self.change_buttons_state("disabled")   # Habilitando botones y campos nuevamente.
+      self.change_status_message(message="URL válida! Comenzando descarga, espere un momento...", color=self.white)
+      
+      # Iniciando Youtube_dl en un thread paralelo de ejecución:
+      self.youtube_dl_thread(url)             
+      
+      self.mp3_file = self.video_file[0:-5] + ".mp3" # Obteniendo la path del MP3 (aún en conversión).
 
-      self.youtube_dl_thread(url) # Youtube_dl en thread paralelo para desc. y convertir a MP3 sin congelar GUI.
-      self.change_to_MP3()        # Esperando conversión para cambiar extension y arreglar guión.
-      self.open_target_folder()           # Se abre la carpeta de destino.
-      self.change_buttons_state("normal") # Habilitando botones y campos nuevamente.
+      if self.check_if_MP3_is_converted():    # Si finalizó la conversión del video a MP3, se continua.
+        self.change_hyphen_in_MP3_filename()  # Cambiando posición del guión que suele venir en los videos.
+        self.open_target_folder()             # Se abre la carpeta de destino.
+        self.change_buttons_state("normal")   # Habilitando botones y campos nuevamente.
+     
+        message = "¡Conversión a MP3 finalizada con éxito! :)"
+        color = self.green
 
-      # Mensaje final de éxito:
-      self.status_message.set("¡Conversión a MP3 finalizada con éxito! :)")
-      self.label_status.configure(textvariable=self.status_message, fg=self.green)
-      self.window.update_idletasks()      # Actualizar GUI.
+      # Si falla la conversión o surgen problemas:
+      else:
+        message = "Error durante la conversión a MP3. :("
+        color = self.red
 
+      self.change_status_message(message, color) # Actualizando mensaje en status (según el caso).
+        
     # En cualquier caso...
-    self.reset_variables()                # Se resetea las variables principales.
-    self.entry_url.select_range(0, END)   # Dejar seleccionado el campo URL para borrar/corregir más rápido.
+    self.reset_variables()                    # Se resetea las variables principales.
+    self.entry_url.select_range(0, END)       # Dejar seleccionado el campo URL para corregirlo más rápido.
+
+    return
+
+
+  def change_status_message(self, message, color):
+    """Método que cambia el mensaje de status en el programa, según mensaje y color pasados como argumentos."""
+
+    self.status_message.set(message)                                        # Recibiendo mensaje.
+    self.label_status.configure(textvariable=self.status_message, fg=color) # Fijando mensaje.
+    self.window.update_idletasks()                                          # Actualizando GUI.
 
     return
 
@@ -273,15 +281,9 @@ class YoutubeToMP3():
     """Método que simplemente llama a youtube_dl a modo de proceso paralelo (para no congelar la GUI),
     recibiendo y pasando una URL como argumento."""
 
-    try:
-      import queue, time
-
-      self.queue = queue.Queue()  # Creando objeto para comunicar mensajes entre thread paraleo y GUI.
-      ytdl_hook = Hook(self.queue, self.ytdl_opts, url) # Iniciando youtube_dl en un thread paralelo.
-      self.check_queue()          # Ejecutando método que busca mensajes constantemente en la queue.
-
-    except ImportError as e:
-      print("\n# ERROR: Hubo problemas al cargar módulos.\n- MENSAJE: {0}".format(e))
+    self.queue = queue.Queue()  # Creando objeto para comunicar mensajes entre thread paraleo y GUI.
+    ytdl_hook = Hook(self.queue, self.ytdl_opts, url) # Iniciando youtube_dl en un thread paralelo.
+    self.check_queue()          # Ejecutando método que busca mensajes constantemente en la queue.
 
     return
 
@@ -309,25 +311,22 @@ class YoutubeToMP3():
 
           # Si se está descargando:
           if self.download_status == "downloading":
-            self.status_message.set("Iniciando descarga del video...")
-            self.label_status.configure(textvariable=self.status_message, fg=self.white)
-            self.change_buttons_state("disabled")         # Para evitar problemas durante la descarga.
-            self.window.update_idletasks()                # Actualizar GUI.
-
+            self.change_status_message(message="Iniciando descarga del video...", color=self.white)
+            time.sleep(1)   # Dejar pasar 1 segundo para dar tiempo a que se vea el mensaje.
+            
           # Si se terminó de descargar:
           if self.download_status == "finished":
-            self.status_message.set("Video descargado, convirtiendo ahora a MP3 (espere unos segundos...)")
-            self.label_status.configure(textvariable=self.status_message, fg=self.white)
-            self.window.update_idletasks()                # Actualizar GUI.
-            finish = True                                 # Para terminar con el ciclo y finalizar.
+            self.change_status_message(message="Video descargado, convirtiendo ahora a MP3...",
+                                       color=self.white)
+            time.sleep(1)   # Dejar pasar 1 segundo para dar tiempo a que se vea el mensaje.
+            finish = True   # Para terminar con el ciclo y finalizar.
 
           # Si hubo error al descargar:
           if self.download_status == "error":
-            self.change_buttons_state("normal")           # Activando botones nuevamente.
-            self.status_message.set("Error al descargar video.")
-            self.label_status.configure(textvariable=self.status_message, fg=self.red)
-            self.window.update_idletasks()                # Actualizar GUI.
-            finish = True                                 # Para terminar con el ciclo y finalizar.
+            self.change_buttons_state("normal") # Activando botones nuevamente.
+            self.change_status_message(message="Error durante descarga del video (compruebe conexión a internet y intente nuevamente).",
+                                       color=self.red)
+            finish = True   # Para terminar con el ciclo y finalizar.
 
           status_updated = False
 
@@ -337,36 +336,22 @@ class YoutubeToMP3():
 
     return
 
-
-  def change_to_MP3(self):
-    """Método que espera a que termine la conversión en curso, detecta la finalización y renombra finalmente
-    un archivo MP3 previamente descargado."""
-
-    self.mp3_file = self.video_file[0:-5] + ".mp3" # Obteniendo la path del MP3 (aún en conversión).
-
-    # Si finalizó la conversión del video a MP3, se continua:
-    if self.check_if_MP3_is_converted():
-      self.change_hyphen_in_MP3_filename() # Cambiando posición del guión que suele venir típicamente en los videos.
-
-    return
-
  
   def check_if_MP3_is_converted(self):
     """Método que chequea si youtube_dl ha terminado de convertir el video a MP3.
     En caso de que detecte el video pero el MP3 siga aún incrementando su tamaño, se espera.
     Si deja de incrementar su tamaño, se da por finalizado y se retorna."""
 
-    last_size = 0
+    last_size = -1    # No se deja en 0 porque el ciclo terminaría al empezar...
     current_size = 0
     finish = False
       
     # Mientras el video no se termine de convertir a MP3, se inicia y se mantiene un ciclo de control:
     while not finish:
       try:
-        import os, time
-
         current_size = os.path.getsize(self.mp3_file) # Obteniendo el último tamaño mientras se realiza la conversión a MP3.
-        # print(current_size)
+        show_size = str(round(current_size / (1024 * 1024), 2))
+        self.change_status_message(message=f"Convirtiendo a MP3: {show_size} MB.", color=self.white)
 
         # Si el último tamaño coincide con el de la última vez, terminar ciclo:
         if current_size == last_size:
@@ -375,18 +360,12 @@ class YoutubeToMP3():
         # Caso contrario, actualizar último tamaño:
         else:
           last_size = current_size
+        
+        time.sleep(1)   # Dejar pasar 1 segundo antes de reiniciar el ciclo.
 
-      except OSError as e:
-        pass # Se pasa de largo porque suele saltar excepción solo durante la 1ra lectura.
-        # print("\n# ERROR: No se pudo obtener el tamaño del archivo MP3.\n- MENSAJE: {0}".format(e))
+      except (FileNotFoundError, OSError) as e:
+        pass            # Suele saltar excepción mientras no exista/no encuentre archivo.
 
-      except ImportError as e:
-        print("\n# ERROR: Hubo problemas al cargar módulo.\n- MENSAJE: {0}".format(e))
-
-      finally:
-        time.sleep(1) # Dejar pasar 1 segundo antes de reiniciar el ciclo.
-
-    # Si se finalizó correctamente...
     return finish
 
 
@@ -395,8 +374,6 @@ class YoutubeToMP3():
 
     # Arreglando guión:
     try:
-      import os
-
       # Corrigiendo problema del guión en título original:
       old_name = self.mp3_file
       new_name = self.mp3_file.replace(" - ", "- ")
@@ -410,12 +387,8 @@ class YoutubeToMP3():
     # En caso de no poder arreglar el guión, se avisa del error en cuestión:
     except OSError as e:
       print("\n# ERROR al renombrar archivo en carpeta destino.\n- Detalles: {0}".format(e))
-      self.status_message.set("MP3 descargado, pero no se pudo renombrar correctamente (ver consola).")
-      self.label_status.configure(textvariable=self.status_message, fg=self.white)
-      self.window.update_idletasks()                # Actualizar GUI.
-
-    except ImportError as e:
-      print("\n# ERROR: Hubo problemas al cargar módulo.\n- MENSAJE: {0}".format(e))
+      self.change_status_message(message="MP3 descargado, pero no se pudo renombrar correctamente (ver consola).",
+                                 color=self.white)
 
     return
 
@@ -436,20 +409,14 @@ class YoutubeToMP3():
 
   def open_target_folder(self):
     """Método que abre una carpeta desde el SO (sea cual sea) a partir de la path de destino."""
-    import os, platform, subprocess
 
     # Intentando chequear plataforma y abrir carpeta destino:
-    try:
-      if platform.system() == "Windows":
-          os.startfile(self.final_path)
-      elif platform.system() == "Darwin":
-          subprocess.Popen(["open", self.final_path])
-      else:
-          subprocess.Popen(["xdg-open", self.final_path])
-
-    # En caso de no lograrse, se avisa por consola:
-    except ImportError as e:
-      print("\n# ERROR: Hubo problemas al cargar módulos.\n- MENSAJE: {0}".format(e))
+    if platform.system() == "Windows":
+        os.startfile(self.final_path)
+    elif platform.system() == "Darwin":
+        subprocess.Popen(["open", self.final_path])
+    else:
+        subprocess.Popen(["xdg-open", self.final_path])
 
     return
 

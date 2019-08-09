@@ -17,8 +17,10 @@ if __name__ != "__main__":
     from tkinter import ttk
     from tkinter import filedialog
 
-    # Otros módulos:
-    import threading
+    # Otros módulos necesarios:
+    import os, threading, time, queue, platform, subprocess
+    from pathlib import Path
+
 
   except AssertionError as e:
     print("\n{0}\n".format(e))
@@ -30,7 +32,7 @@ if __name__ != "__main__":
     sys.exit()  # Forzando finalización del programa.
 
   
-  # Si no hubo problemas, se continua con las clases auxiliares:
+  # Si no hubo problemas, se continua con la carga de las clases auxiliares:
 
   class MyLogger(object):
     """Clase para poder recibir mensajes de error desde youtube_dl."""

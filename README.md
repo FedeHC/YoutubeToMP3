@@ -11,13 +11,13 @@ Creado con *Python 3*, usando *Tkinter* para la interfaz gráfica y *Youtube_dl*
 
 ## Requisitos:
 - [Python 3.5 (o superior)](https://www.python.org/downloads/).
-    - El módulo **Tkinter** suele venir instalado por defecto con *Python*, pero si hay problemas se puede chequear si [está correctamente instalado](https://tkdocs.com/tutorial/install.html) en nuestro propio sistema operativo.
+    - El módulo **Tkinter** suele venir por defecto con *Python*, pero si surgen problemas chequear que [esté correctamente instalado](https://tkdocs.com/tutorial/install.html) en nuestro SO.
 
 - Tener instalado [Youtube_dl](http://ytdl-org.github.io/youtube-dl/download.html).
-    - En Windows es necesario tener [Microsoft Visual C++ 2010 Redistributable Package (x86)](https://www.microsoft.com/en-US/download/details.aspx?id=5555) (más detalles en [Youtube_dl](http://ytdl-org.github.io/youtube-dl/download.html)).
-    - Youtube_dl a su vez necesita tener instalado [FFmpeg](https://ffmpeg.org/download.html) para poder efectuar la conversión de video a MP3.
+    - En Windows se necesita instalar [Microsoft Visual C++ 2010 Redistributable Package (x86)](https://www.microsoft.com/en-US/download/details.aspx?id=5555) (más detalles en [Youtube_dl](http://ytdl-org.github.io/youtube-dl/download.html)).
+    - En cualquier SO, se necesita tener instalado [FFmpeg](https://ffmpeg.org/download.html) para que Youtube_dl pueda efectuar la conversión de video a MP3.
 
-- En Linux es recomendable usar [Virtualenv](https://virtualenv.pypa.io/en/stable/installation/) para instalar por tanto *Python 3* (y por extensión *youtube_dl* y cualquier dependencia instalada) separado de la versión que usa el propio sistema operativo para su funcionamiento interno.
+- En Linux es recomendable usar [Virtualenv](https://virtualenv.pypa.io/en/stable/installation/) para instalar *Python 3* por separado de la versión que utilize internamente el SO.
 
 ## Uso:
 Simplemente ejecutar el script de python:
