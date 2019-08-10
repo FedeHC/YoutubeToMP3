@@ -39,18 +39,19 @@ class YoutubeToMP3():
     self.menubar = Menu(self.window)
     self.window["menu"] = self.menubar
 
-    # [Menu Archivo]
-    self.menu_file = Menu(self.menubar)
-    self.menubar.add_cascade(menu=self.menu_file, label="Opciones")
-    self.menu_file.add_command(label="Iniciar")
-    self.menu_file.add_command(label="Preferencias")
-    self.menu_file.add_separator()
-    self.menu_file.add_command(label="Salir")
+    # [Menu Opciones]
+    self.menu_options = Menu(self.menubar)
+    self.menubar.add_cascade(menu=self.menu_options, label="Opciones")
+    self.menu_options.add_command(label="Preferencias")
+    self.menu_options.add_separator()
+    self.menu_options.add_command(label="Salir", command=self.window.destroy)
 
     # [Menu Acerca]
     self.menu_help = Menu(self.menubar)
     self.menubar.add_cascade(menu=self.menu_help, label="Ayuda")
-    self.menu_help.add_command(label="Acerca")
+    message_body = "YouTubeToMP3 v1.0b\nPor FedeHC"
+    self.menu_help.add_command(label="Acerca", command=lambda:
+                                               messagebox.showinfo(title="Acerca", message=message_body))
 
     # [VENTANA]
     # [URL / Botón INICIAR]
@@ -61,7 +62,8 @@ class YoutubeToMP3():
     self.entry_url.grid(column=1, row=0, sticky=W)
     self.entry_url.focus()    # Poner en foco en este campo al arrancar el programa.
 
-    self.btn_download = Button(self.window, text="INICIAR", font=("Arial", 10), command=self.download_and_convert)
+    self.btn_download = Button(self.window, text="INICIAR", font=("Arial", 10),
+                               command=self.download_and_convert)
     self.btn_download.grid(column=2, row=0, padx=10, sticky=W)
 
     # [Carpeta de Descarga]
@@ -72,7 +74,8 @@ class YoutubeToMP3():
     self.entry_dir.insert(0, self.final_path)
     self.entry_dir.grid(column=1, row=1, sticky=W)
 
-    self.btn_final_dir = Button(self.window, text="Seleccionar", font=("Arial", 6), command=self.select_dir)
+    self.btn_final_dir = Button(self.window, text="Seleccionar", font=("Arial", 6),
+                                command=self.select_dir)
     self.btn_final_dir.grid(column=2, row=1, padx=10, sticky=W)
 
     # [Mensaje de status]
@@ -109,7 +112,7 @@ class YoutubeToMP3():
 
     # Ajustando colores de letra y fondo a menues:
     self.menubar.configure(fg=self.white, bg=self.black)
-    self.menu_file.configure(fg=self.white, bg=self.black)
+    self.menu_options.configure(fg=self.white, bg=self.black)
     self.menu_help.configure(fg=self.white, bg=self.black)
 
     # Ajustando colores de letra, fondo y selección al resto de los widgets:

@@ -16,6 +16,7 @@ if __name__ != "__main__":
     from tkinter import *
     from tkinter import ttk
     from tkinter import filedialog
+    from tkinter import messagebox
 
     # Otros módulos necesarios:
     import os, threading, time, queue, platform, subprocess
