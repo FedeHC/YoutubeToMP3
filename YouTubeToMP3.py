@@ -150,7 +150,7 @@ class YoutubeToMP3():
       temp_path = os.getcwd()
 
     # En cualquier caso, se retorna la path rectificada con "/" al final:
-    return temp_path + "/"
+    return temp_path + os.path.sep
 
 
   def select_dir(self):
@@ -234,35 +234,27 @@ class YoutubeToMP3():
     status_url = self.check_url(self.entry_url.get())
     ok_url = self.check_status_url(status_url)
 
-    # Si la URL es correcta, se prosigue a descargar, convertir a MP3, renombrar, abrir carpeta y avisar:
+    # Si la URL es correcta:
     if ok_url:
-      url = status_url['url']                 # Se actualiza a la URL ya rectificada.
-      self.change_buttons_state("disabled")   # Habilitando botones y campos nuevamente.
+      url = status_url['url']                         #  Se actualiza a la URL ya rectificada.
+      self.change_buttons_state("disabled")           # Habilitando botones y campos nuevamente.
       self.change_status_message(message="URL válida! Iniciando...", color=self.white)
       
-      # Iniciando Youtube_dl en un thread paralelo de ejecución:
-      self.youtube_dl_thread(url)             
+      self.youtube_dl_thread(url)                     # Iniciando Youtube_dl en un thread paralelo.
       
-      self.mp3_file = self.video_file[0:-5] + ".mp3" # Obteniendo la path del MP3 (aún en conversión).
+      self.mp3_file = self.video_file[0:-5] + ".mp3"  # Actualizando extensión a MP3 (aún en conversión).
 
-      if self.check_if_MP3_is_converted():    # Si finalizó la conversión del video a MP3, se continua.
-        self.change_hyphen_in_MP3_filename()  # Cambiando posición del guión que suele venir en los videos.
-        self.open_target_folder()             # Se abre la carpeta de destino.
-        self.change_buttons_state("normal")   # Habilitando botones y campos nuevamente.
-     
-        message = "¡Conversión a MP3 finalizada con éxito! :)"
-        color = self.green
-
-      # Si falla la conversión o surgen problemas:
-      else:
-        message = "Error durante la conversión a MP3. :("
-        color = self.red
-
-      self.change_status_message(message, color) # Actualizando mensaje en status (según el caso).
+      # Si finaliza correctamente la conversión, se continua:
+      if self.check_if_MP3_is_converted():
+        self.change_hyphen_and_set_uppercase()
+        self.open_target_folder()
+        self.change_buttons_state("normal")
+        self.change_status_message(message="¡Conversión a MP3 finalizada con éxito! :)",
+                                   color=self.green)
         
     # En cualquier caso...
-    self.reset_variables()                    # Se resetea las variables principales.
-    self.entry_url.select_range(0, END)       # Dejar seleccionado el campo URL para corregirlo más rápido.
+    self.reset_variables()
+    self.entry_url.select_range(0, END)           # Dejar seleccionado el campo URL.
 
     return
 
@@ -293,7 +285,7 @@ class YoutubeToMP3():
     a reiniciar el ciclo hasta obtener una. El ciclo finaliza al encontrar un mensaje de status determinado."""
 
     finish = False                          # Flag de control.
-    dicc_ok = False                         # Flag para prueba interna.
+    dicc_ok = False                         # Flag para prueba interna (poner en True para probar).
 
     # Mientras el video no descargue o termine en error, se inicia y se mantiene un ciclo de control:
     while not finish:
@@ -402,25 +394,39 @@ class YoutubeToMP3():
     return finish
 
 
-  def change_hyphen_in_MP3_filename(self):
-    """Método que cambia la posición del guión que suele venir típicamente de los videos de música en Youtube."""
+  def change_hyphen_and_set_uppercase(self):
+    """Método que arregla ligeramente de posición al guión que separa autor del título en nombre de archivo.
+    También pone en máyusculas cada palabra en el nombre del archivo (tanto autor como título)."""
 
     # Arreglando guión:
     try:
-      # Corrigiendo problema del guión en título original:
-      old_name = self.mp3_file
-      new_name = self.mp3_file.replace(" - ", "- ")
 
-      # print("- Viejo nombre: {0}".format(old_name)
-      # print("- Nuevo nombre: {0}".format(new_name))
+      old_name = self.mp3_file
+      
+      # Obtener por separado el path y el nombre del MP3 convertido:
+      path = self.final_path
+      mp3 = old_name.split(os.path.sep)[-1]
+
+      # Corrigiendo el problema del guión en nombre del MP3:
+      mp3 = mp3.replace(" - ", "- ")
+      
+      # Poniendo en mayúsculas al comienzo de cada palabra:
+      mp3 = " ".join(word.capitalize() for word in mp3.split())
+
+      # Uniendo nuevamente path con el nuevo nombre corregido:
+      new_name = path + mp3
+
+      # print(f"- Viejo nombre: {old_name}")
+      # print(f"- Nuevo nombre: {new_name}")
 
       os.rename(old_name, new_name)
       self.mp3_file = new_name
 
+
     # En caso de no poder arreglar el guión, se avisa del error en cuestión:
     except OSError as e:
       print("\n# ERROR al renombrar archivo en carpeta destino.\n- Detalles: {0}".format(e))
-      self.change_status_message(message="MP3 descargado, pero no se pudo renombrar correctamente (ver consola).",
+      self.change_status_message(message="MP3 convertido, pero no se pudo renombrar correctamente.",
                                  color=self.white)
 
     return
