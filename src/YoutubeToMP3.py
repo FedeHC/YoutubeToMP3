@@ -31,8 +31,10 @@ class YoutubeToMP3():
     self.window.option_add("*tearOff", FALSE)
 
     # [Icono del programa]
-    icon_window = Image("photo", file="images/logo.png")
-    self.window.tk.call("wm", "iconphoto", self.window._w, icon_window)
+    logo_file = "logo.png"
+    if os.path.exists(logo_file):
+      icon_window = Image("photo", file=logo_file)
+      self.window.tk.call("wm", "iconphoto", self.window._w, icon_window)
 
     # [MENU]
     # [Barra de menu]
@@ -480,6 +482,6 @@ class YoutubeToMP3():
 # Iniciando:
 if __name__ == "__main__":
   youtubeToMp3 = YoutubeToMP3(title="YouTubeToMP3 v1.0b",
-                              path="/media/Archivos/",
+                              path="",
                               ytdl_opts=ytdl_opts,
                               template="%(title)s.%(ext)s")

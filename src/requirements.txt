@@ -1,0 +1,4 @@
+altgraph==0.16.1
+PyInstaller==3.5
+youtube-dl==2019.8.2
+
