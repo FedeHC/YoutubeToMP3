@@ -51,7 +51,7 @@ class YoutubeToMP3():
     # [Menu Acerca]
     self.menu_help = Menu(self.menubar)
     self.menubar.add_cascade(menu=self.menu_help, label="Ayuda")
-    message_body = "YouTubeToMP3 v1.0b\nPor FedeHC"
+    message_body = title + "\nPor FedeHC"
     self.menu_help.add_command(label="Acerca", command=lambda:
                                                messagebox.showinfo(title="Acerca", message=message_body))
 
@@ -481,7 +481,7 @@ class YoutubeToMP3():
 
 # Iniciando:
 if __name__ == "__main__":
-  youtubeToMp3 = YoutubeToMP3(title="YouTubeToMP3 v1.0b",
+  youtubeToMp3 = YoutubeToMP3(title="YoutubeToMP3 v1.01b",
                               path="",
                               ytdl_opts=ytdl_opts,
                               template="%(title)s.%(ext)s")
