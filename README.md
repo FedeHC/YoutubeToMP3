@@ -10,7 +10,7 @@ Creado con *Python 3*, usando *Tkinter* para la interfaz gráfica y *Youtube_dl*
 
 Descargar el zip según el SO usado y descomprimirlo en cualquier carpeta para ejecutar finalmente el binario que viene dentro.
 
-- GNU/Linux <sup>1</sup>:  [Descargar](./downloads/YoutubeToMP3-1.01b-Linux.zip)
+- GNU/Linux <sup>1</sup>:  [Descargar](./download/YoutubeToMP3-1.01b-Linux.zip)
 - Windows<sup>2</sup>:  Pendiente
 - Mac<sup>3</sup>:  Pendiente
 
