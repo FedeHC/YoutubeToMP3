@@ -9,19 +9,11 @@ Una simple app de escritorio que que permite descargar música en formato MP3 de
 
 ## Instalación:
 
-- Descargar el zip de según el sistema instalado (Linux/Win/Mac),
-- Descomprimirlo,
+- [Descargar el zip]((./download/)) según el sistema operativo<sup>*</sup> usado (Linux/Win/Mac),
+- Descomprimirlo.
 - Ejecutar el binario.
 
-## Descargas:
-
-- Ir a la [carpeta de descargas](./download/).
-
-<sup>1: Testeado de momento en Linux Mint versiones 18.3 y 19.2.</sup>
-
-<sup>2: Próximamente a testear en Windows 10.</sup>
-
-<sup>3: Sin planes de portar y testear de momento.</sup>
+###### * Testeado de momento solo en Linux Mint, en versiones 18.3 y 19.2. A testear en Windows 10 en un futuro próximo. Sin planes para portar y testear en Mac.
 
 ## Uso:
 
