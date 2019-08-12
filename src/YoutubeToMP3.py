@@ -247,7 +247,7 @@ class YoutubeToMP3():
       
       self.youtube_dl_thread(url)                     # Iniciando Youtube_dl en un thread paralelo.
       
-      self.mp3_file = self.video_file[0:-5] + ".mp3"  # Actualizando extensión a MP3 (aún en conversión).
+      self.set_MP3_extension()                        # Actualizando extensión a MP3 (aún en conversión).
 
       # Si finaliza correctamente la conversión, se continua:
       if self.check_if_MP3_is_converted():
@@ -273,6 +273,21 @@ class YoutubeToMP3():
 
     return
 
+  
+  def set_MP3_extension(self):
+    """Método que obtiene path del video para extraer su nombre y guardarlo en variable como extensión .mp3."""
+
+    slash = os.path.sep                             # Obteniendo barra (esto varía según S.O.).
+
+    video_path = self.video_file.split(slash)[0:-1] # Obteniendo solo la parte de la ruta desde la path.
+    video_path = slash.join(video_path)             # Convirtiendo de lista a string.
+
+    temp_name = self.video_file.split(slash)[-1]
+    dot_pos = temp_name.rfind(".")                  # Encontrando la pos. donde inicia la extensión.
+    self.mp3_file = video_path + slash + temp_name[0:dot_pos] + ".mp3" # Agregando path y cambiando extensión a ".mp3".
+
+    return
+
 
   def youtube_dl_thread(self, url):
     """Método que simplemente llama a youtube_dl a modo de proceso paralelo (para no congelar la GUI),
@@ -295,7 +310,6 @@ class YoutubeToMP3():
     # Mientras el video no descargue o termine en error, se inicia y se mantiene un ciclo de control:
     while not finish:
       try:
-        # assert self.queue.get(0), "ERROR: No se obtuvo diccionario desde queue."
         d = self.queue.get(0)
         self.download_status = d["status"]  # Actualizando status.
         self.video_file = d["filename"]     # Obteniendo path y filename desde dicc.
@@ -344,11 +358,6 @@ class YoutubeToMP3():
       except queue.Empty:       # En caso de recibir una queue vacía.
           pass                  # No hacer nada, seguir de largo.
   
-      """
-      except AssertionError as e:
-        print("\n{0}\n".format(e))
-        sys.exit()              # Forzando finalización del programa.
-      """
       
     return
 
@@ -366,7 +375,7 @@ class YoutubeToMP3():
       
     start_time = time.time()        # Tomando el tiempo inicial.
     current_time = None
-    
+
     # Mientras el video no se termine de convertir a MP3, se inicia y se mantiene un ciclo de control:
     while not finish:
       try:
@@ -383,18 +392,19 @@ class YoutubeToMP3():
         # Si el último tamaño coincide con el de la última vez:
         if current_size == last_size:
           attempts += 1             # Sumar 1 al contador de intentos.
-          if attempts >= 10:        # Si los intentos fueron más de 10 (10 intentos = 1 segundo)
-            finish = True           # Terminar entonces el ciclo.
         
         # En caso contrario:
         else:
           attempts = 0              # Se resetea el contador de intentos para evitar problemas.
           last_size = current_size  # ctualizar último tamaño obtenido.
       
+        if attempts >= 10:        # Si los intentos fueron más de 10 (10 intentos = 1 segundo)
+          finish = True           # Terminar entonces el ciclo.
+
         time.sleep(0.1)             # Dejar 1/10 seg. hasta empezar de nuevo el ciclo.
 
       except (FileNotFoundError, OSError) as e:
-        pass                        # Suele surgir mientras no exista/no encuentre archivo en 1° intento.
+        attempts += 1             # Sumar 1 al contador de intentos.
 
     return finish
 
@@ -481,7 +491,7 @@ class YoutubeToMP3():
 
 # Iniciando:
 if __name__ == "__main__":
-  youtubeToMp3 = YoutubeToMP3(title="YoutubeToMP3 v1.01b",
+  youtubeToMp3 = YoutubeToMP3(title="YoutubeToMP3 v1.02",
                               path="",
                               ytdl_opts=ytdl_opts,
                               template="%(title)s.%(ext)s")
