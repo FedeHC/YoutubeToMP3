@@ -2,16 +2,15 @@
 
 Una simple app de escritorio que que permite descargar música en formato MP3 desde Youtube. 
 
-- Creado con ***Python 3*** y ***Tkinter*** para la GUI.
-- Y utilizando ***Youtube_dl*** para descargar y convertir los videos a MP3 (que a su vez usa ***FFmpeg*** para la conversión de video a audio).
+- Creado con ***Python 3*** y empleando ***Tkinter*** para la GUI.
+- Usando ***Youtube_dl*** para descargar y convertir los videos a MP3 (que a su vez emplea  ***FFmpeg*** para la conversión de video a audio).
 
 ![Imagen](./screenshots/captura-1.jpg)
 
 ## Instalación:
 
-- [Descargar el zip]((./download/)) según el sistema operativo<sup>*</sup> usado (Linux/Win/Mac),
-- Descomprimirlo.
-- Ejecutar el binario.
+- [Descargar el zip](./download/) según el sistema operativo<sup>*</sup> disponible (Linux/Win/Mac).
+- Descomprimir y ejecutar el binario que viene dentro.
 
 ###### * Testeado de momento solo en Linux Mint, en versiones 18.3 y 19.2. A testear en Windows 10 en un futuro próximo. Sin planes para portar y testear en Mac.
 

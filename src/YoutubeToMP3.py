@@ -465,12 +465,15 @@ class YoutubeToMP3():
     """Método que abre una carpeta desde el SO (sea cual sea) a partir de la path de destino."""
 
     # Intentando chequear plataforma y abrir carpeta destino:
+    # Windows
     if platform.system() == "Windows":
-        os.startfile(self.final_path)
+      os.startfile(self.final_path)
+    # iOS
     elif platform.system() == "Darwin":
-        subprocess.Popen(["open", self.final_path])
+      subprocess.Popen(["open", self.final_path])
+    # Linux
     else:
-        subprocess.Popen(["xdg-open", self.final_path])
+      subprocess.Popen(["xdg-open", self.final_path])
 
     return
 

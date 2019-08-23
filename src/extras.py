@@ -5,7 +5,10 @@ from __future__ import unicode_literals
 
 if __name__ != "__main__":
   try:
-    import sys
+    # Módulos:
+    import sys, os, threading, time, queue, platform, subprocess
+    from pathlib import Path
+
     # Comprobar que se ejecutra el script desde Python >=3.5:
     assert sys.version_info >= (3, 5), "ERROR: el programa debe ejecutarse desde Python 3.5 o superior."
 
@@ -17,10 +20,6 @@ if __name__ != "__main__":
     from tkinter import ttk
     from tkinter import filedialog
     from tkinter import messagebox
-
-    # Otros módulos necesarios:
-    import os, threading, time, queue, platform, subprocess
-    from pathlib import Path
 
 
   except AssertionError as e:
