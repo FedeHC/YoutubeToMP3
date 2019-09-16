@@ -5,7 +5,7 @@ from extras import *
 
 
 class YoutubeToMP3():
-  """Clase que contiene toda la interfaz gráfica y el grueso de su funcionalidad."""
+  """Clase que contiene toda la interfaz gráfica y la funcionalidad de todo el programa."""
 
   def __init__(self, title, path, ytdl_opts, template):
 
@@ -100,7 +100,7 @@ class YoutubeToMP3():
 
 
   def change_GUI_colors(self):
-    """Metodo que simplemente cambia los colores de la GUI a los valores pasados."""
+    """Metodo que simplemente cambia los colores por defecto de la GUI a determinados valores."""
 
     # Determinando variables con los colores a usar:
     self.black = "#282923"
@@ -140,7 +140,7 @@ class YoutubeToMP3():
 
   def check_path(self, temp_path):
     """Método que chequea una path recibida como argumento, remueve espacios y comprueba si es válida para el 
-    S.O. actual. Según el caso se rectifica la path recibida según el caso."""
+    S.O. actual. En cualquier caso se devuelve la path misma con la rectificación correspondiente."""
     
     temp_path = temp_path.strip()       # Removiendo espacios iniciales y finales (si los hay).
 
@@ -159,8 +159,8 @@ class YoutubeToMP3():
 
 
   def select_dir(self):
-    """Método que abre ventana de diálogo solicitando una carpeta de destino y actualiza el campo
-    correspondiente en ventana."""
+    """Método que abre una ventana de diálogo solicitando seleccionar carpeta de destino. Al seleccionar
+    una, se actualiza el campo correspondiente en la ventana del programa."""
 
     selected_dir = filedialog.askdirectory(initialdir=self.final_path,
                                           title="Doble click para seleccionar la carpeta destino:")
@@ -171,7 +171,7 @@ class YoutubeToMP3():
 
 
   def check_url(self, current_url):
-    """Método que chequea si la url de youtube pasada por argumento es válida."""
+    """Método que chequea si la url recibida como argumento es válida como url de youtube."""
     
     status_url = {"url": None, "valid": None, "reason": None} # Dicc. de status de la URL recibida.
 
@@ -202,8 +202,8 @@ class YoutubeToMP3():
 
 
   def check_status_url(self, status_url):
-    """Método que chequea datos de un dicc. recibido como argumento, actualiza label en ventana y devuelve
-    True o False según el caso."""
+    """Método que chequea datos de un dicc. recibido como argumento, actualiza un label en la ventana del 
+    programa y devuelve True o False según el caso."""
 
     # Si no es una url válida se aborta y se muestra mensaje:
     if status_url["valid"] == False:
@@ -230,7 +230,9 @@ class YoutubeToMP3():
 
 
   def download_and_convert(self):
-    """Método que procede a descargar el video, convertirlo a MP3 y moverlo a la carpeta de destino."""
+    """Método que intenta la descarga de un video, su conversión a MP3 y finalmente mover el resultado a la
+    carpeta de destino si hay éxito. En caso contrario, avisa por label de status en la ventana del programa
+    si sucede algún error en algún punto del proceso."""
 
     self.final_path = self.check_path(self.entry_dir.get())     # Chequear carpeta destino en el campo corresp.
     self.ytdl_opts["outtmpl"] = self.final_path + self.template # Actualizando carpeta destino (en dicc. youtube_ld).
@@ -265,7 +267,8 @@ class YoutubeToMP3():
 
 
   def change_status_message(self, message, color):
-    """Método que cambia el mensaje de status en el programa, según mensaje y color pasados como argumentos."""
+    """Método que recibe 2 argumentos y que procede a cambiar el contenido de un label de status del
+    programa según lo recibido."""
 
     self.status_message.set(message)                                        # Recibiendo mensaje.
     self.label_status.configure(textvariable=self.status_message, fg=color) # Fijando mensaje.
@@ -275,7 +278,8 @@ class YoutubeToMP3():
 
   
   def set_MP3_extension(self):
-    """Método que obtiene path del video para extraer su nombre y guardarlo en variable como extensión .mp3."""
+    """Método que obtiene path del video para extraer su nombre y guardarlo en la variable corresp. como
+    extensión mp3."""
 
     slash = os.path.sep                             # Obteniendo barra (esto varía según S.O.).
 
@@ -301,11 +305,12 @@ class YoutubeToMP3():
 
 
   def check_queue(self):
-    """Método que chequea en queue en búsqueda de dicc. de youtube_dl. Si no se recibe dicc., se vuelve
-    a reiniciar el ciclo hasta obtener una. El ciclo finaliza al encontrar un mensaje de status determinado."""
+    """Método que chequea en una queue en búsqueda de dicc. de youtube_dl. Si no se recibe este dicc. se
+    vuelve a reiniciar el ciclo hasta obtener una. El ciclo finaliza al encontrar uno que contenga una
+    variable de status con determinados contenidos."""
 
     finish = False                          # Flag de control.
-    dicc_ok = False                         # Flag para prueba interna (poner en True para probar).
+    # dicc_ok = False                         # Flag para prueba interna (poner en True para probar).
 
     # Mientras el video no descargue o termine en error, se inicia y se mantiene un ciclo de control:
     while not finish:
@@ -315,9 +320,9 @@ class YoutubeToMP3():
         self.video_file = d["filename"]     # Obteniendo path y filename desde dicc.
         
         # Ver contenido del diccionario por consola (¡solo usar durante pruebas!)
-        if dicc_ok:
-          print(d)
-          dicc_ok = False
+        # if dicc_ok:
+        #   print(d)
+        #   dicc_ok = False
 
         # Si se está descargando:
         if self.download_status == "downloading":
@@ -356,16 +361,14 @@ class YoutubeToMP3():
           finish = True         # Para terminar con el ciclo y finalizar.
 
       except queue.Empty:       # En caso de recibir una queue vacía.
-          pass                  # No hacer nada, seguir de largo.
-  
-      
+        pass                    # No hacer nada, forzar a seguir de largo.
+        
     return
 
  
   def check_if_MP3_is_converted(self):
-    """Método que chequea si youtube_dl ha terminado de convertir el video a MP3.
-    En caso de que detecte el video pero el MP3 siga aún incrementando su tamaño, se espera.
-    Si deja de incrementar su tamaño, se da por finalizado y se retorna."""
+    """Método que chequea si youtube_dl ha terminado de convertir el video a MP3 según la variación del
+    tamaño del archivo en conversión. Devuelve True o False según el caso."""
 
     # Variables necesarias:
     last_size = -1            # No se deja en 0 porque el ciclo terminaría solo al empezar.
@@ -410,12 +413,11 @@ class YoutubeToMP3():
 
 
   def change_hyphen_and_set_uppercase(self):
-    """Método que arregla ligeramente de posición al guión que separa autor del título en nombre de archivo.
-    También pone en máyusculas cada palabra en el nombre del archivo (tanto autor como título)."""
+    """Método que arregla ligeramente de posición al guión que separa el nombre del autor del nombre del
+    tema, ademas de iniciar en mayúsculas cada palabra (capitalize)."""
 
     # Arreglando guión:
     try:
-
       old_name = self.mp3_file
       
       # Obtener por separado el path y el nombre del MP3 convertido:
@@ -448,7 +450,8 @@ class YoutubeToMP3():
 
 
   def change_buttons_state(self, action):
-    """Método que cambia el estado de todos los botones del programa según un string de estado pasado como argumento."""
+    """Método que cambia el estado de todos los botones del programa según un string de estado pasado como
+    argumento."""
 
     # Cambiando campo y botón URL:
     self.entry_url.config(state=action)
@@ -462,7 +465,7 @@ class YoutubeToMP3():
 
 
   def open_target_folder(self):
-    """Método que abre una carpeta desde el SO (sea cual sea) a partir de la path de destino."""
+    """Método que abre una carpeta desde el SO (sea cual sea este) a partir de la path de destino."""
 
     # Intentando chequear plataforma y abrir carpeta destino:
     # Windows
@@ -479,7 +482,7 @@ class YoutubeToMP3():
 
 
   def reset_variables(self):
-    """Método que simplemente resetea las variables principales de la clase."""
+    """Método que resetea las variables principales de la clase a None."""
 
     # Reseteando variables principales:
     self.download_status = None
